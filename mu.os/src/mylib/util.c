@@ -1,11 +1,13 @@
 #include <mylib.h>
 #include <syscall.h>
 #include <fcntl.h>
-#difine size_history=10
-int idex_history=0;
-char history[index_history][1024];  // Store up to 10 commands
+
+#define HISTORY_SIZE 10
+
+char history[HISTORY_SIZE][1024];  // Store up to 10 commands
 int history_index = 0;             // The index where the next command will be stored
 unsigned long console_fd = 0;
+
 
 
 unsigned long str_len(char *sz) {
