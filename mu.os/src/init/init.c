@@ -2,25 +2,33 @@
 #include <fcntl.h>
 #include <mylib.h>
 
+
+
 int main() {
+    sleep_sec(1);
 
     str_print("\033[H\033[J");
-     char input[] = "Hello, world! This is a test.";
-    char *delim = " ,.!";  // Delimiters: space, comma, period, exclamation mark
-    char *token = str_tok(input, delim);  // First call with the input string
-    str_print(token);
 
     char *msg = "MyOS 0.0.0.2 Initializing...\n";
-
-    
-
-
 
     sleep_sec(1);
 
     str_print(msg);
 
-    sleep_sec(5);
+    //////////////////////////////////
+
+char line[] = "  echo   this is a   test  ";
+    char tokens[10][1024];
+    int token_count = tokenize_input(line, tokens, 10);
+    
+    for (int i = 0; i < token_count; i++) {
+        str_print("\n");
+        str_print(tokens[i]);
+    }
+
+    ///////////////////////////////
+
+    sleep_sec(3);
 
     execute_process("/bin/lash");
 
