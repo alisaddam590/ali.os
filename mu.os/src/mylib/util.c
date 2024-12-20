@@ -2,8 +2,8 @@
 #include <syscall.h>
 #include <fcntl.h>
 
-
-char history[10][1024];  // Store up to 10 commands
+int idex_history=0;
+char history[index_history][1024];  // Store up to 10 commands
 int history_index = 0;             // The index where the next command will be stored
 unsigned long console_fd = 0;
 
