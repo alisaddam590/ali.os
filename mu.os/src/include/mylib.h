@@ -7,7 +7,6 @@ extern unsigned long sys_open(char *fn, int flags);
 extern unsigned long sys_read(unsigned long fd, char *buff, unsigned long size);
 extern unsigned long sys_reboot();
 unsigned long sys_nanosleep(struct timespec *req, struct timespec *rem);
-unsigned long sys_ioctl(unsigned long fd, unsigned long request, unsigned long *argp);
 
 extern unsigned long str_len(char *sz);
 extern void str_print(char *str);
@@ -20,4 +19,19 @@ extern unsigned long sys_write(unsigned long fd, char *buf, unsigned long len);
 extern long sys_fork();
 extern long sys_execve(char *filename, char **argv, char **envp);
 extern int execute_process(char *filename);
-extern char* str_tok(char *str, const char *delim);
+
+
+
+char* str_copy(char* dest, const char* src);
+
+
+void console_open() ;
+
+char console_read() ;
+void console_write(char *str) ;
+void console_write_char(char c) ;
+void add_to_history(char *command) ;
+int read_line(char *buff, int max) ;
+void clear_shell();
+void echo_command(char *buff) ;
+int tokenize_input(char *line, char input[][1024], int max_tokens) ;
