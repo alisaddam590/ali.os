@@ -2,15 +2,14 @@
 #include <syscall.h>
 #include <fcntl.h>
 
-#define HISTORY_SIZE 10
 
-char history[HISTORY_SIZE][1024];  // Store up to 10 commands
-int history_index = 0;             // The index where the next command will be stored
-unsigned long console_fd = 0;
-
+char history[10][1024];  // Store up to 10 commands
+int history_index = 0;   // The index where the next command will be stored
+unsigned long console_fd;
 
 
 unsigned long str_len(char *sz) {
+
     int count = 0;
 
     while(*sz++) {
@@ -27,7 +26,7 @@ void delay(int ticks) {
 }
 
 void str_print(char *str) {
-    _syscall(SYS_write, (void *)1 /*stdout*/, str, (void *)str_len(str), 0, 0, 0);
+    _syscall(SYS_write, (void )1 /*stdout*/, str, (void *)str_len(str), 0, 0, 0);
 }
 
 int str_eq(char *a, char *b) {
@@ -91,15 +90,15 @@ void console_write_char(char c) {
 }
 
 void add_to_history(char *command) {
-    if (history_index < HISTORY_SIZE) {
+    if (history_index < 10) {
         str_copy(history[history_index], command);
         history_index++;
     } else {
         // If history is full, shift all commands up and add the new one
-        for (int i = 1; i < HISTORY_SIZE; i++) {
+        for (int i = 1; i < 10; i++) {
             str_copy(history[i-1], history[i]);
         }
-        str_copy(history[HISTORY_SIZE - 1], command);
+        str_copy(history[10 - 1], command);
     }
 }
 
@@ -215,6 +214,3 @@ int tokenize_input(char *line, char input[][1024], int max_tokens) {
 
     return token_count;  // Return the number of tokens found
 }
-
-
-
