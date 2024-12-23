@@ -1,6 +1,6 @@
 SHELL ?= /bin/sh
 CC ?= gcc
-FLAGS ?= -nostdlib -I../include
+FLAGS ?= -nostdlib -I../include -z noexecstack
 MYOS_PATH ?= /mnt/myos
 DESTDIR ?= /mnt/myos
 
