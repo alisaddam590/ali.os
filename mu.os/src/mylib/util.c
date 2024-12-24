@@ -223,6 +223,26 @@ int tokenize_input(char *line, char input[][1024], int max_tokens) {
 
     return token_count;  // Return the number of tokens found
 }
+
+void cd_command(char *token, int token_count) {
+    if (token_count > 1 && token_count < 3) {
+        char *new_path = token;
+
+        if (sys_chdir(new_path) == 0) {
+            str_print("Directory changed to: ");
+            str_print(new_path);
+            str_print("\n");
+            str_copy(cwd, new_path);  // Optionally update cwd buffer
+        } else {
+            str_print("cd: No such file or directory: ");
+            str_print(new_path);
+            str_print("\n");
+        }
+    } else {
+        str_print("cd: Missing argument\n");
+    }
+}
+
 //mkdir function 
 struct inode{
 
