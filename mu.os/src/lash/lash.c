@@ -1,4 +1,8 @@
+
+#include<stdio.h>
 #include <mylib.h>
+#include <linux/fs.h> 
+
 
 
 int main() {
@@ -36,7 +40,7 @@ int main() {
             char *new_path = tokens[1];
 
             if (sys_chdir(new_path) == 0) {
-                str_print("Directory changed to: ");
+                printf("Directory changed to: %s",new_path);
                 str_print(new_path);
                 str_print("\n");
                 str_copy(cwd, new_path);  // Optionally update cwd buffer
@@ -48,6 +52,22 @@ int main() {
             else  {
             str_print("cd: Missing argument\n");
             }       
+        }else if(str_eq(tokens[0],"pwd")){
+            str_print(cwd);
+
+        }else if(str_eq(tokens[0],"mkdir")){
+             struct inode *user_path=resolve_path("/mnt/myos/src/user");
+             char file_name[1024];
+            str_print("Enter the name of the file :");
+            while(str_eq(tokens[0],file_name)==0){
+                str_print("Enter the name of the file :");
+                str_eq(tokens[0],file_name);
+            }
+            sys_create_file(user_path, file_name);
+
+           
+           
+            
         }
     }
     return 0;
