@@ -1,7 +1,7 @@
 #include <syscall.h>
 #include <mylib.h>
 
-unsigned long sys_ioctl(unsigned long fd, unsigned long request, unsigned long *argp){
+unsigned long sys_ioctl(unsigned long fd, unsigned long request, unsigned long *argp) {
     return _syscall(SYS_ioctl,  (void *)fd,  (void *)request,  (void *)argp, 0, 0, 0);
 }
 
@@ -17,7 +17,8 @@ unsigned long sys_reboot() {
     return _syscall(SYS_reboot, (void *)0xfee1dead, (void *)672274793, (void*)0x1234567, 0, 0, 0);
 }
 
-unsigned long sys_nanosleep(struct timespec *req, struct timespec *rem) {
+// Fix: Change return type of sys_nanosleep to match the header declaration (long)
+long sys_nanosleep(struct timespec *req, struct timespec *rem) {
     return _syscall(SYS_nanosleep, req, rem, 0, 0, 0, 0);
 }
 
@@ -56,3 +57,10 @@ int execute_process(char *filename) {
     }
 }
 
+unsigned long sys_getcwd(char *buf, unsigned long size) {
+    return _syscall(SYS_getcwd, buf, (void *)size, 0, 0, 0, 0);
+}
+
+long sys_chdir(char *path) {
+    return _syscall(SYS_chdir, path, 0, 0, 0, 0, 0);
+}
