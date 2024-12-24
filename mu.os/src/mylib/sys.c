@@ -64,3 +64,7 @@ unsigned long sys_getcwd(char *buf, unsigned long size) {
 long sys_chdir(char *path) {
     return _syscall(SYS_chdir, path, 0, 0, 0, 0, 0);
 }
+
+unsigned long sys_mkdir(char *path, mode_t mode) {
+    return _syscall(SYS_mkdir, path, (void *)(long)mode, 0, 0, 0, 0);
+}
