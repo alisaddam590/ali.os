@@ -26,7 +26,7 @@ void delay(int ticks) {
 }
 
 void str_print(char *str) {
-    _syscall(SYS_write, (void )1 /*stdout*/, str, (void *)str_len(str), 0, 0, 0);
+    _syscall(SYS_write, (void *)1 /*stdout*/, str, (void *)str_len(str), 0, 0, 0);
 }
 
 int str_eq(char *a, char *b) {
@@ -214,3 +214,6 @@ int tokenize_input(char *line, char input[][1024], int max_tokens) {
 
     return token_count;  // Return the number of tokens found
 }
+
+
+
