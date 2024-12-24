@@ -1,7 +1,6 @@
 #include <mylib.h>
 #include <syscall.h>
 #include <fcntl.h>
-#include <linux/fs.h> 
 
 
 char history[10][1024];  // Store up to 10 commands
@@ -224,6 +223,7 @@ int tokenize_input(char *line, char input[][1024], int max_tokens) {
     return token_count;  // Return the number of tokens found
 }
 
+
 void cd_command(char *token, int token_count) {
     if (token_count > 1 && token_count < 3) {
         char *new_path = token;
@@ -243,24 +243,21 @@ void cd_command(char *token, int token_count) {
     }
 }
 
-//mkdir function 
-struct inode{
+void mkdir_command(char *dir_name, int token_count) {
+    if (token_count > 1) {
+        mode_t mode = 0755;  // Default permissions for the new directory
+        unsigned long result = sys_mkdir(dir_name, mode);
 
-};
-
-
-int sys_create_file(struct inode *dir, const char *name) {
-    umode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;  
-    struct inode *inode;
-
-    inode = new_inode(dir->i_sb); 
-    inode->i_mode = mode;  
-    
-    return 0;
+        if (result == 0) {
+            str_print("Directory created successfully: ");
+            str_print(dir_name);
+            str_print("\n");
+        } else {
+            str_print("Failed to create directory: ");
+            str_print(dir_name);
+            str_print("\n");
+        }
+    } else {
+        str_print("mkdir: Missing argument\n");
+    }
 }
-
-struct inode *resolve_path(const char *path) {
-    struct inode *inode = get_inode_from_path(path);
-    return inode;
-}
-
