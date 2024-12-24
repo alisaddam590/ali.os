@@ -1,6 +1,7 @@
 #include <mylib.h>
 #include <syscall.h>
 #include <fcntl.h>
+#include <linux/fs.h> 
 
 
 char history[10][1024];  // Store up to 10 commands
@@ -222,6 +223,24 @@ int tokenize_input(char *line, char input[][1024], int max_tokens) {
 
     return token_count;  // Return the number of tokens found
 }
+//mkdir function 
+struct inode{
+
+};
 
 
+int sys_create_file(struct inode *dir, const char *name) {
+    umode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;  
+    struct inode *inode;
+
+    inode = new_inode(dir->i_sb); 
+    inode->i_mode = mode;  
+    
+    return 0;
+}
+
+struct inode *resolve_path(const char *path) {
+    struct inode *inode = get_inode_from_path(path);
+    return inode;
+}
 
