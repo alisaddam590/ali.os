@@ -1,6 +1,10 @@
 #pragma once
 #include <time.h>
 
+extern char history[10][1024];  // Store up to 10 commands
+extern int history_index;            // The index where the next command will be stored
+extern unsigned long console_fd;
+
 extern unsigned long _syscall(int num, void *a0, void *a1, void *a2, void *a3, void *a4, void *a5);
 
 extern unsigned long sys_open(char *fn, int flags);
@@ -22,16 +26,16 @@ extern int execute_process(char *filename);
 
 
 
-char* str_copy(char* dest, const char* src);
+extern char* str_copy(char* dest, const char* src);
 
 
-void console_open() ;
+extern void console_open() ;
 
-char console_read() ;
-void console_write(char *str) ;
-void console_write_char(char c) ;
-void add_to_history(char *command) ;
-int read_line(char *buff, int max) ;
-void clear_shell();
-void echo_command(char *buff) ;
-int tokenize_input(char *line, char input[][1024], int max_tokens) ;
+extern char console_read() ;
+extern void console_write(char *str) ;
+extern void console_write_char(char c) ;
+extern void add_to_history(char *command) ;
+extern int read_line(char *buff, int max) ;
+extern void clear_shell();
+extern void echo_command(char *buff) ;
+extern int tokenize_input(char *line, char input[][1024], int max_tokens) ;
