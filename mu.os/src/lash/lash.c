@@ -30,15 +30,8 @@ int main() {
             clear_shell();
         } else if (str_eq(tokens[0], "echo")) {
             // Handle echo command: print the rest of the input
-            echo_command(buff);     // Call echo function to display the argument
+            echo_command(buff);  // Call echo function to display the argument
         }
-
-
-    for (int i = 0; i < 5; i++) {
-        str_print("\n");
-        str_print(tokens[i]);
-    }
-
     }
     return 0;
 }
