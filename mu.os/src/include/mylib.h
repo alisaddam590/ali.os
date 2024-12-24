@@ -1,5 +1,6 @@
 #pragma once
 #include <time.h>
+#include <linux/fs.h> 
 
 extern char history[10][1024];  // Store up to 10 commands
 extern int history_index;            // The index where the next command will be stored
@@ -43,3 +44,8 @@ extern int tokenize_input(char *line, char input[][1024], int max_tokens) ;
 extern void pwd_command () ;
 extern long sys_chdir(char *path);
 extern unsigned long sys_getcwd(char *buf, unsigned long size);
+//mkdir function
+ struct inode;
+
+extern int sys_create_file(struct inode *dir, const char *name);
+extern struct inode *resolve_path(const char *path);
