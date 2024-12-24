@@ -35,27 +35,14 @@ int main() {
         } else if (str_eq(tokens[0], "echo")) {
             // Handle echo command: print the rest of the input
             echo_command(buff);  // Call echo function to display the argument
-        }else if (str_eq(tokens[0], "cd")) {
-             if (token_count > 1 && token_count <3) {
-            char *new_path = tokens[1];
-
-            if (sys_chdir(new_path) == 0) {
-                printf("Directory changed to: %s",new_path);
-                str_print(new_path);
-                str_print("\n");
-                str_copy(cwd, new_path);  // Optionally update cwd buffer
-            } else {
-                str_print("cd: No such file or directory: ");
-                str_print(new_path);
-                str_print("\n");
-                }   }
-            else  {
-            str_print("cd: Missing argument\n");
-            }       
-        }else if(str_eq(tokens[0],"pwd")){
+        }      // Check for cd command
+         else if (str_eq(tokens[0], "cd")) {
+            cd_command(tokens[1], token_count);  // Call cd_command function
+        }
+        else if (str_eq(tokens[0], "pwd")) {
             str_print(cwd);
-
-        }else if(str_eq(tokens[0],"mkdir")){
+        }
+        else if(str_eq(tokens[0],"mkdir")){
              struct inode *user_path=resolve_path("/mnt/myos/src/user");
              char file_name[1024];
             str_print("Enter the name of the file :");
