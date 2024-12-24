@@ -1,18 +1,14 @@
-
-#include<stdio.h>
 #include <mylib.h>
-#include <linux/fs.h> 
-
-
 
 int main() {
     str_print("\033[H\033[J"); // Clear screen
     str_print("LASH v0.2.0\n");
-   
 
+    str_copy(cwd,"/user");
     console_open();
 
     while (1) {
+        str_print(cwd);
         str_print(" :> ");
         char buff[1024];
         char tokens[10][1024];
@@ -23,39 +19,36 @@ int main() {
             continue;
         }
 
-        // Check for echo command
+        // Check for exit command
         if (str_eq(tokens[0], "exit")) {
             str_print("Exiting shell...\n");
             break;
-        } else if (str_eq(tokens[0], "reboot")) {
+        } 
+        // Check for reboot command
+        else if (str_eq(tokens[0], "reboot")) {
             str_print("\n\n*** SYSTEM REBOOTING ***\n");
             sys_reboot();
-        } else if (str_eq(tokens[0], "clear")) {
+        } 
+        // Check for clear command
+        else if (str_eq(tokens[0], "clear")) {
             clear_shell();
-        } else if (str_eq(tokens[0], "echo")) {
-            // Handle echo command: print the rest of the input
+        } 
+        // Check for echo command
+        else if (str_eq(tokens[0], "echo")) {
             echo_command(buff);  // Call echo function to display the argument
-        }      // Check for cd command
+        } 
+        // Check for cd command
          else if (str_eq(tokens[0], "cd")) {
             cd_command(tokens[1], token_count);  // Call cd_command function
         }
+
         else if (str_eq(tokens[0], "pwd")) {
             str_print(cwd);
         }
-        else if(str_eq(tokens[0],"mkdir")){
-             struct inode *user_path=resolve_path("/mnt/myos/src/user");
-             char file_name[1024];
-            str_print("Enter the name of the file :");
-            while(str_eq(tokens[0],file_name)==0){
-                str_print("Enter the name of the file :");
-                str_eq(tokens[0],file_name);
-            }
-            sys_create_file(user_path, file_name);
-
-           
-           
-            
+        else if (str_eq(tokens[0], "mkdir")) {
+            mkdir_command(tokens[1], token_count);  // Call mkdir_command function
         }
     }
+
     return 0;
 }
