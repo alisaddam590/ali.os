@@ -6,7 +6,7 @@
 char history[10][1024];  // Store up to 10 commands
 int history_index = 0;   // The index where the next command will be stored
 unsigned long console_fd;
-
+char cwd[1024];  // Buffer to store the current directory
 
 unsigned long str_len(char *sz) {
 
@@ -188,6 +188,14 @@ void echo_command(char *buff) {
     str_print(buff); // Print the echo string directly
     str_print("\n"); 
 }
+
+
+void pwd_command () {
+    sys_getcwd(cwd, sizeof(cwd));  // Get the current directory
+    str_print(cwd);  // Print the current directory
+    str_print("\n");
+}
+
 
 int tokenize_input(char *line, char input[][1024], int max_tokens) {
     int token_count = 0;  // Number of tokens found
