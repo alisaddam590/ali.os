@@ -44,8 +44,10 @@ extern int tokenize_input(char *line, char input[][1024], int max_tokens) ;
 extern void pwd_command () ;
 extern long sys_chdir(char *path);
 extern unsigned long sys_getcwd(char *buf, unsigned long size);
+extern void cd_command(char *token, int token_count);
 //mkdir function
  struct inode;
 
 extern int sys_create_file(struct inode *dir, const char *name);
 extern struct inode *resolve_path(const char *path);
+
