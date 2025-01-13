@@ -1,0 +1,78 @@
+To create a simple HTML page, you need to write the HTML code and save it with the .html extension. Here's a basic template for an HTML page:
+
+Basic HTML Template:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple HTML Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #555;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to My HTML Page</h1>
+        <p>This is a simple webpage created with HTML. You can add more content here.</p>
+        <p>HTML is the standard markup language for creating web pages.</p>
+    </div>
+
+</body>
+</html>
+
+Explanation:
+
+1. <!DOCTYPE html>: Declares the document type and version of HTML (HTML5 here).
+
+
+2. <html lang="en">: Defines the language of the page (English).
+
+
+3. <head>: Contains metadata like character set, viewport settings, and the title of the page.
+
+
+4. <style>: Internal CSS to style the page (you can also link to an external CSS file).
+
+
+5. <body>: Contains the content of the page. Inside it, there’s a div container that holds the heading (<h1>) and paragraphs (<p>).
+
+
+
+Steps to view your page:
+
+1. Open a text editor (such as Notepad, VS Code, or Sublime Text).
+
+
+2. Copy and paste the above code into the editor.
+
+
+3. Save the file with the .html extension (e.g., index.html).
+
+
+4. Open the file in a web browser to view your page.
+
+
+
+This is just a starting point, and you can expand the HTML with more features such as images, links, forms, etc. Let me know if you need more advanced examples!
+
