@@ -1,4 +1,3 @@
-
 LDFLAGS = -shared
 TARGET = libmy.so
 CSOURCES = $(shell echo *.c)
@@ -12,6 +11,7 @@ BINDIR = $(PREFIX)/lib
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	ld $(FLAGS) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
+	$(CC) $(FLAGS) $(LDFLAGS) -o $(TARGET) $(OBJECTS) -lc   # Link against glibc
 
 include ../base.mk
+
