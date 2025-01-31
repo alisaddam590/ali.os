@@ -1,5 +1,4 @@
-
-TARGET=lash
+TARGET=init
 CSOURCES = $(shell echo *.c)
 OBJECTS = $(CSOURCES:.c=_c.o)
 
@@ -9,9 +8,6 @@ BINDIR = $(PREFIX)/bin
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	
-	$(CC) $(LDFLAGS) $(FLAGS) -o $(TARGET) $(OBJECTS) -lmy 
-	
-	
+	$(CC) $(FLAGS) -o $(TARGET) $(OBJECTS) $(LDFLAGS) -lmy -L/mnt/myos/lib -lc 
 
 include ../base.mk
