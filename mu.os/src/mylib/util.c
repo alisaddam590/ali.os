@@ -1,15 +1,18 @@
 #include <mylib.h>
 #include <syscall.h>
 #include <fcntl.h>
+#include<unistd.h>
+#include<stdio.h>
+#include<time.h>
 
+#define HISTORY_SIZE 10
 
-char history[10][1024];  // Store up to 10 commands
-int history_index = 0;   // The index where the next command will be stored
-unsigned long console_fd;
-char cwd[1024];  // Buffer to store the current directory
+char history[HISTORY_SIZE][1024];  // Store up to 10 commands
+int history_index = 0;             // The index where the next command will be stored
+unsigned long console_fd = 0;
+
 
 unsigned long str_len(char *sz) {
-
     int count = 0;
 
     while(*sz++) {
@@ -90,15 +93,15 @@ void console_write_char(char c) {
 }
 
 void add_to_history(char *command) {
-    if (history_index < 10) {
+    if (history_index < HISTORY_SIZE) {
         str_copy(history[history_index], command);
         history_index++;
     } else {
         // If history is full, shift all commands up and add the new one
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i < HISTORY_SIZE; i++) {
             str_copy(history[i-1], history[i]);
         }
-        str_copy(history[10 - 1], command);
+        str_copy(history[HISTORY_SIZE - 1], command);
     }
 }
 
@@ -189,14 +192,6 @@ void echo_command(char *buff) {
     str_print("\n"); 
 }
 
-
-void pwd_command () {
-    sys_getcwd(cwd, sizeof(cwd));  // Get the current directory
-    str_print(cwd);  // Print the current directory
-    str_print("\n");
-}
-
-
 int tokenize_input(char *line, char input[][1024], int max_tokens) {
     int token_count = 0;  // Number of tokens found
     int i = 0, j = 0;     // Indices for input array and current token
@@ -224,40 +219,12 @@ int tokenize_input(char *line, char input[][1024], int max_tokens) {
 }
 
 
-void cd_command(char *token, int token_count) {
-    if (token_count > 1 && token_count < 3) {
-        char *new_path = token;
 
-        if (sys_chdir(new_path) == 0) {
-            str_print("Directory changed to: ");
-            str_print(new_path);
-            str_print("\n");
-            str_copy(cwd, new_path);  // Optionally update cwd buffer
-        } else {
-            str_print("cd: No such file or directory: ");
-            str_print(new_path);
-            str_print("\n");
-        }
-    } else {
-        str_print("cd: Missing argument\n");
-    }
+void Time() {
+    time_t t;
+    time(&t);
+    struct tm *localTime = localtime(&t);
+    printf("Current time: %s", asctime(localTime));
 }
 
-void mkdir_command(char *dir_name, int token_count) {
-    if (token_count > 1) {
-        mode_t mode = 0755;  // Default permissions for the new directory
-        unsigned long result = sys_mkdir(dir_name, mode);
 
-        if (result == 0) {
-            str_print("Directory created successfully: ");
-            str_print(dir_name);
-            str_print("\n");
-        } else {
-            str_print("Failed to create directory: ");
-            str_print(dir_name);
-            str_print("\n");
-        }
-    } else {
-        str_print("mkdir: Missing argument\n");
-    }
-}
