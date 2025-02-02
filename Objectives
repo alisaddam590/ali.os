@@ -14,7 +14,7 @@ pwd to print the current working directory.
 
 exit to exit the shell.
 
-clear to clear the terminal screen.
+
 
 
 Process Management: Ensure that background processes (&) and foreground processes work correctly. Handle process termination and status checking using waitpid().
