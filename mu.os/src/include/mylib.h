@@ -10,7 +10,7 @@ extern unsigned long sys_reboot();
 unsigned long sys_nanosleep(struct timespec *req, struct timespec *rem);
 
 extern unsigned long str_len(char *sz);
-extern void str_print(char *str);
+extern void str_print(const char *format, ...);
 
 extern void delay(int ticks);
 extern void sleep_sec(int sec);
@@ -39,6 +39,10 @@ int tokenize_input(char *line, char input[][1024], int max_tokens) ;
 
 extern void dir(char path[1024]);
 extern void Time();
-
-
-
+extern int change_directory(const char *path);
+extern char* print_current_directory();
+extern void pwd();
+extern int ls(const char *path);
+extern int dir_exists(const char *path);
+extern int create_directory(const char *path);
+extern int mkdir_create_folder(const char *folder_name);
