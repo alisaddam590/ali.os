@@ -4,12 +4,27 @@
 #include<unistd.h>
 #include<stdio.h>
 #include<time.h>
+#include<stdlib.h>
+#include<string.h>
+#include <stdarg.h>
+#include <unistd.h>  
+#include <sys/stat.h> 
+#include<dirent.h>
+#include <sys/types.h>
+
 
 #define HISTORY_SIZE 10
+#define MAX_PATH_LENGTH 256
+
+char current_directory[MAX_PATH_LENGTH] = "//user/ali";  
+char root_directory[MAX_PATH_LENGTH] = "/";
+
+
 
 char history[HISTORY_SIZE][1024];  // Store up to 10 commands
 int history_index = 0;             // The index where the next command will be stored
 unsigned long console_fd = 0;
+
 
 
 unsigned long str_len(char *sz) {
@@ -28,8 +43,20 @@ void delay(int ticks) {
     }
 }
 
-void str_print(char *str) {
-    _syscall(SYS_write, (void *)1 /*stdout*/, str, (void *)str_len(str), 0, 0, 0);
+void str_print(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    // Create a buffer to store the final string
+    char buffer[1024];
+    int len = vsnprintf(buffer, sizeof(buffer), format, args);  // Format the string with the arguments
+
+    // If the formatting is successful, write to stdout
+    if (len >= 0) {
+        _syscall(SYS_write, (void *)1 /*stdout*/, buffer, (void *)len, 0, 0, 0);
+    }
+
+    va_end(args);
 }
 
 int str_eq(char *a, char *b) {
@@ -225,6 +252,177 @@ void Time() {
     time(&t);
     struct tm *localTime = localtime(&t);
     printf("Current time: %s", asctime(localTime));
+}
+
+int change_directory(const char *path) {
+    // Save the current directory as the previous one before changing
+    strncpy(root_directory, current_directory, MAX_PATH_LENGTH - 1);
+    root_directory[MAX_PATH_LENGTH - 1] = '\0'; // Ensure string termination
+
+    // Basic input validation
+    if (path == NULL || strlen(path) == 0) {
+        str_print("Error: Path cannot be empty\n");
+        return -1;
+    }
+
+    // Handle "cd /" (root directory)
+    if (strcmp(path, "/") == 0) {
+        strcpy(current_directory, "/");
+        return 0;
+    }
+
+    // Handle "cd .." (go back to the previous directory)
+    if (strcmp(path, "..") == 0) {
+        // Make sure we are not at the root directory
+        if (strcmp(current_directory, "/") != 0) {
+            // Find the last occurrence of '/'
+            char *last_slash = strrchr(current_directory, '/');
+            if (last_slash != NULL) {
+                // Set the character after the last '/' to '\0' to "cut off" the last directory name
+                *last_slash = '\0';
+
+                // Ensure we don't end up with an empty path (avoid cutting off everything)
+                if (strlen(current_directory) == 0) {
+                    strncpy(current_directory, "/", MAX_PATH_LENGTH - 1);
+                }
+            }
+        } else {
+            str_print("Error: Already at the root directory\n");
+            return -1;
+        }
+        return 0;
+    }
+
+    // Check if the given path exists using stat()
+    struct stat path_stat;
+    char full_path[MAX_PATH_LENGTH];
+    
+    // If the path is relative, combine with the current_directory
+    if (path[0] != '/') {
+        snprintf(full_path, MAX_PATH_LENGTH, "%s/%s", current_directory, path);
+    } else {
+        strncpy(full_path, path, MAX_PATH_LENGTH - 1);
+        full_path[MAX_PATH_LENGTH - 1] = '\0'; // Ensure string termination
+    }
+
+    if (stat(full_path, &path_stat) != 0) { // If stat fails, path doesn't exist
+        str_print("Error: The path does not exist\n");
+        return -1;
+    }
+
+    // If the path is a directory, proceed with changing directory
+    if (S_ISDIR(path_stat.st_mode)) {
+        strncpy(current_directory, full_path, MAX_PATH_LENGTH - 1);
+        current_directory[MAX_PATH_LENGTH - 1] = '\0'; // Ensure string termination
+    } else {
+        str_print("Error: The path is not a directory\n");
+        return -1;
+    }
+
+    // Ensure the path doesn't exceed the max length
+    if (strlen(current_directory) >= MAX_PATH_LENGTH) {
+        str_print("Error: Path is too long\n");
+        return -1;
+    }
+
+    return 0;
+}
+
+
+
+// Function to return the current directory (instead of printing it directly)
+char* print_current_directory() {
+    return current_directory;
+}
+
+void pwd() {
+    str_print("Current directory: %s\n", current_directory);
+}
+
+int ls(const char *path) {
+    DIR *dir;
+    struct dirent *entry;
+    char full_path[MAX_PATH_LENGTH];
+
+    // If no path is provided, use current_directory
+    if (path == NULL || strlen(path) == 0) {
+        path = current_directory;
+    }
+
+    // Build the full path (current directory + the given path)
+    if (path[0] != '/') {
+        snprintf(full_path, MAX_PATH_LENGTH, "%s/%s", current_directory, path);
+    } else {
+        strncpy(full_path, path, MAX_PATH_LENGTH - 1);
+        full_path[MAX_PATH_LENGTH - 1] = '\0'; // Ensure string termination
+    }
+
+    // Open the directory
+    dir = opendir(full_path);
+    if (dir == NULL) {
+        str_print("Error: Unable to open directory\n");
+        return -1;
+    }
+
+    // Read and list the contents of the directory
+    str_print("Listing contents:\n");
+    while ((entry = readdir(dir)) != NULL) {
+        // Skip the special "." and ".." entries
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        // Print the name of each entry
+        printf("%s\n", entry->d_name);
+    }
+
+    // Close the directory
+    closedir(dir);
+
+    return 0;
+}
+
+int dir_exists(const char *path) {
+    struct stat statbuf;
+    return (stat(path, &statbuf) == 0 && S_ISDIR(statbuf.st_mode)); // Check if path is a directory
+}
+
+// Pseudo code for creating a directory
+int create_directory(const char *path) {
+    int result = mkdir(path, 0755);  // Permissions: rwxr-xr-x (owner can read/write/exec, others can read/exec)
+    if (result == -1) {
+        perror("mkdir failed");  // Print the error message if mkdir fails
+        return -1;  // Return -1 if directory creation fails
+    }
+    return 0; // Success
+}
+
+// The mkdir function that only creates a directory in the current directory
+int mkdir_create_folder(const char *folder_name) {
+    // Get the current directory path (you can get it from your shell environment)
+    const char *current_path = print_current_directory();
+
+    // Construct the full directory path (current path + folder name)
+    char folder_path[1024];
+    snprintf(folder_path, sizeof(folder_path), "%s/%s", current_path, folder_name);
+
+    // Debugging: Print the full path being used
+    printf("Attempting to create directory at path: %s\n", folder_path);
+
+    // Check if the directory already exists
+    if (dir_exists(folder_path)) {
+        str_print("Error: Directory '%s' already exists in the current directory '%s'.\n", folder_name, current_path);
+        return -1; // Directory exists, return failure
+    }
+
+    // Create the directory in the current directory
+    if (create_directory(folder_path) != 0) {
+        str_print("Error: Could not create directory '%s' in the current directory '%s'.\n", folder_name, current_path);
+        return -1; // Directory creation failed
+    }
+
+    str_print("Directory '%s' created successfully in the current directory '%s'.\n", folder_name, current_path);
+    return 0; // Success
 }
 
 
